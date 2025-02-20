@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="w3-bar w3-blue w3-card-4" style="padding: 4px 0;">
+    <div class="w3-bar-item w3-left" style="padding: 8px 16px;">
+        <h2 class="w3-text-white" style="font-size: 18px; margin: 0;">Dashboard</h2>
+    </div>
+    <div class="w3-bar-item w3-right" style="padding: 8px 16px;">
+        <a href="/" class="w3-button w3-blue w3-round" style="padding: 4px 12px; font-size: 14px;">Home</a>
+        <a href="/edit_profile" class="w3-button w3-blue w3-round" style="padding: 4px 12px; font-size: 14px;">Profile</a>
+        <a href="/logout" class="w3-button w3-green w3-round" style="padding: 4px 12px; font-size: 14px;">Logout</a>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="w3-container w3-margin-top">
+    <div class="w3-row">
+        <!-- Profile Information Box -->
+        <div class="w3-col m4 w3-padding">
+            <div class="w3-card-4 w3-round-large">
+                <header class="w3-container w3-blue">
+                    <h3 class="w3-center">Profile Information</h3>
+                </header>
+                <div class="w3-container w3-padding-16">
+                    <p><strong>ID Number:</strong> {{ registration.IDNO }}</p>
+                    <p><strong>Name:</strong> {{ registration.Firstname }} {{ registration.Midname }} {{ registration.Lastname }}</p>
+                    <p><strong>Course:</strong> {{ registration.Course }}</p>
+                    <p><strong>Year Level:</strong> {{ registration.Year_level }}</p>
+                    <p><strong>Email:</strong> {{ registration.email }}</p>
+                    <p><strong>Address:</strong> {{ registration.address }}</p>
+                    <p><strong>Remaining Sessions:</strong> {{ registration.sessions }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lab Rules Box -->
+        <div class="w3-col m4 w3-padding">
+            <div class="w3-card-4 w3-round-large">
+                <header class="w3-container w3-blue">
+                    <h3 class="w3-center">Lab Rules</h3>
+                </header>
+                <div class="w3-container w3-padding-16">
+                    <ol>
+                        <li>No food or drinks allowed in the lab.</li>
+                        <li>Keep the lab clean and organized.</li>
+                        <li>Do not tamper with lab equipment.</li>
+                        <li>Report any issues to the lab supervisor.</li>
+                        <li>Follow all safety protocols.</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sit-In Rules Box -->
+        <div class="w3-col m4 w3-padding">
+            <div class="w3-card-4 w3-round-large">
+                <header class="w3-container w3-blue">
+                    <h3 class="w3-center">Sit-In Rules</h3>
+                </header>
+                <div class="w3-container w3-padding-16">
+                    <ol>
+                        <li>Sign in and out when using the lab.</li>
+                        <li>Respect other users' space and time.</li>
+                        <li>Do not disturb ongoing classes or activities.</li>
+                        <li>Use resources responsibly.</li>
+                        <li>Follow the lab schedule.</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="w3-center w3-margin-top">
+    <p>Welcome to the Sit In Management System!</p>
+</div>
+{% endblock %}

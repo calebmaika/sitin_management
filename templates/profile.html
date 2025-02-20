@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="w3-bar w3-blue w3-card-4" style="padding: 4px 0;">
+    <div class="w3-bar-item w3-left" style="padding: 8px 16px;">
+        <h2 class="w3-text-white" style="font-size: 18px; margin: 0;">Edit Profile</h2>
+    </div>
+    <div class="w3-bar-item w3-right" style="padding: 8px 16px;">
+        <a href="/" class="w3-button w3-blue w3-round" style="padding: 4px 12px; font-size: 14px;">Home</a>
+        <a href="/edit_profile" class="w3-button w3-blue w3-round" style="padding: 4px 12px; font-size: 14px;">Profile</a>
+        <a href="/logout" class="w3-button w3-green w3-round" style="padding: 4px 12px; font-size: 14px;">Logout</a>
+    </div>
+</div>
+
+<div class="w3-container" 
+    style="height: 100vh; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center;">
+
+    <div class="w3-card-4 w3-animate-top w3-round-large w3-light-pale-blue" style="max-width: 600px; width: 100%; padding: 32px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+        <h2 class="w3-center w3-text-blue w3-margin-bottom">Profile</h2>
+        
+        <form action="/edit_profile" method="post">
+            <div class="w3-row">
+                <div class="w3-col l6 s12">
+                    <label for="IDNO" class="w3-text-grey">ID Number</label>
+                    <input type="text" id="IDNO" name="IDNO" class="w3-input w3-border w3-round" value="{{registration.IDNO}}" disabled>
+                </div>
+                <div class="w3-col l6 s12" style="padding-left: 15px;">
+                    <label for="Firstname" class="w3-text-grey">First Name</label>
+                    <input type="text" id="Firstname" name="Firstname" class="w3-input w3-border w3-round" value="{{registration.Firstname}}" required>
+                </div>
+            </div>
+
+            <div class="w3-row">
+                <div class="w3-col l6 s12">
+                    <label for="Lastname" class="w3-text-grey">Last Name</label>
+                    <input type="text" id="Lastname" name="Lastname" class="w3-input w3-border w3-round" value="{{registration.Lastname}}" required>
+                </div>
+                <div class="w3-col l6 s12" style="padding-left: 15px;">
+                    <label for="Midname" class="w3-text-grey">Middle Name</label>
+                    <input type="text" id="Midname" name="Midname" class="w3-input w3-border w3-round" value="{{registration.Midname}}">
+                </div>
+            </div>
+
+            <div class="w3-row">
+                <div class="w3-col l6 s12">
+                    <label for="Course" class="w3-text-grey">Course</label>
+                    <select id="Course" name="Course" class="w3-select w3-border w3-round" value="{{registration.Course}}" required>
+                        <!-- <option value="" disabled selected>Select Course</option> -->
+                        <option value="BSIT">BSIT</option>
+                        <option value="BSCS">BSCS</option>
+                        <option value="BSCPE">BSCPE</option>
+                        <option value="BSIDT">BSIDT</option>
+                        <option value="BSED">BSED</option>
+                    </select>
+                </div>
+                <div class="w3-col l6 s12" style="padding-left: 15px;">
+                    <label for="Year_level" class="w3-text-grey">Year Level</label>
+                    <select id="Year_level" name="level" class="w3-select w3-border w3-round" value="{{registration.Year_level}}" required>
+                        <!-- <option value="" disabled selected>Select Level</option> -->
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="w3-row">
+                <div class="w3-col s12">
+                    <label for="email" class="w3-text-grey">Email</label>
+                    <input type="text" id="email" name="email" class="w3-input w3-border w3-round" value="{{registration.email}}" required>
+                </div>
+            </div>
+
+            <div class="w3-row">
+                <div class="w3-col s12">
+                    <label for="address" class="w3-text-grey">Address</label>
+                    <input type="text" id="address" name="address" class="w3-input w3-border w3-round" value="{{registration.address}}" required>
+                </div>
+            </div>
+
+            <p>
+                <button type="submit" class="w3-button w3-block w3-blue w3-hover-light-blue w3-round-large">Save Changes</button>
+            </p>
+        </form>
+    </div>
+</div>
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div id="toast" class="toast w3-text-white w3-padding w3-round-large w3-center w3-margin-top w3-card-4 w3-animate-opacity" 
+             style="background-color: #36f43f; 
+                    color: white; 
+                    width: 20%; 
+                    position: fixed; 
+                    bottom: 20px; 
+                    left: 50%; 
+                    transform: translateX(-50%); 
+                    z-index: 1000;">
+            {% for category, message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+
+</div>
+
+<script>
+window.onload = function() {
+    var toast = document.getElementById('toast');
+    if (toast) {
+        setTimeout(function() {
+            toast.style.opacity = '0'; 
+            setTimeout(function() {
+                toast.style.display = 'none'; 
+            }, 500); 
+        }, 3000);
+    }
+};
+</script>
+{% endblock %}
