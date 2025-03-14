@@ -73,6 +73,24 @@
         </div>
     </div>
 
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div id="toast" class="toast w3-text-white w3-padding w3-round-large w3-center w3-margin-top w3-card-4 w3-animate-opacity" 
+        style="background-color: #f44336; 
+        color: white; 
+        width: 20%; 
+        margin-bottom: 20px;
+        position: fixed; 
+        bottom: 0; 
+        right: 10; 
+        left: 10;">
+            {% for category, message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+    {% endwith %}
+
     <script>
         // Automatically open the modal when search results are available
         document.getElementById('sitInModal').style.display = 'block';
