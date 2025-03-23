@@ -11,3 +11,19 @@ git fetch origin
 git checkout main
 
 git pull origin main
+
+
+---- pushing changes -------
+
+git add .
+
+git commit -m "commit title"
+
+git branch -M main
+
+git remote add origin https://github.com/calebmaika/asd.git
+
+git push -u origin main
+
+
+

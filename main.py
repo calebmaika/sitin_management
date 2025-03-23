@@ -219,6 +219,92 @@ def lab_rules():
     
     return render_template('labRules.html')
 
+@app.route('/student_sit_in_history')
+def student_sit_in_history():
+    if 'username' not in session:
+        flash("You must log in to view your sit-in history.", "error")
+        return redirect(url_for('login'))
+
+    # Get the student's ID from the session
+    student_idno = session.get('IDNO')
+
+    conn = get_db()
+    cursor = conn.cursor()
+
+    # Fetch the student's sit-in history
+    cursor.execute("""
+        SELECT sit_in_records.*, registration.Firstname, registration.Midname, registration.Lastname
+        FROM sit_in_records
+        JOIN registration ON sit_in_records.student_idno = registration.IDNO
+        WHERE sit_in_records.student_idno = ?
+        ORDER BY sit_in_records.sit_in_time DESC
+    """, (student_idno,))
+
+    sit_in_records = cursor.fetchall()
+    close_db(conn)
+
+    # Render the student's sit-in history page
+    return render_template('student_sit_in_history.html', sit_in_records=sit_in_records)
+    
+@app.route('/submit_feedback', methods=['POST'])
+def submit_feedback():
+    if 'username' not in session:
+        flash("You must log in to submit feedback.", "error")
+        return redirect(url_for('login'))
+
+    sit_in_id = request.form['sit_in_id']
+    comment = request.form['comment']
+
+    conn = get_db()
+    cursor = conn.cursor()
+
+    try:
+        # Update the feedback in the database
+        cursor.execute("""
+            UPDATE sit_in_records
+            SET feedback = ?
+            WHERE id = ?
+        """, (comment, sit_in_id))
+
+        conn.commit()
+        flash("Feedback submitted successfully.", "success")
+    except sqlite3.Error as e:
+        conn.rollback()
+        flash(f"An error occurred: {e}", "error")
+    finally:
+        close_db(conn)
+
+    return redirect(url_for('student_sit_in_history'))
+
+@app.route('/delete_feedback', methods=['POST'])
+def delete_feedback():
+    if 'username' not in session:
+        flash("You must log in to delete feedback.", "error")
+        return redirect(url_for('login'))
+
+    sit_in_id = request.form['sit_in_id']
+
+    conn = get_db()
+    cursor = conn.cursor()
+
+    try:
+        # Delete the feedback from the database
+        cursor.execute("""
+            UPDATE sit_in_records
+            SET feedback = NULL
+            WHERE id = ?
+        """, (sit_in_id,))
+
+        conn.commit()
+        flash("Feedback deleted successfully.", "success")
+    except sqlite3.Error as e:
+        conn.rollback()
+        flash(f"An error occurred: {e}", "error")
+    finally:
+        close_db(conn)
+
+    return redirect(url_for('student_sit_in_history'))
+
 #4dmin 
 
 # Admin Registration Route
@@ -493,6 +579,30 @@ def admin_sit_in_history():
     close_db(conn)
 
     return render_template('admin_sit_in_history.html', sit_in_records=sit_in_records)
+
+@app.route('/admin/feedback_report')
+def admin_feedback_report():
+    if 'admin_username' not in session:
+        flash("You must log in as an admin to access this page.", "error")
+        return redirect(url_for('admin_login'))
+
+    conn = get_db()
+    cursor = conn.cursor()
+
+    # Fetch all feedback from the sit_in_records table
+    cursor.execute("""
+        SELECT sit_in_records.*, registration.Firstname, registration.Midname, registration.Lastname
+        FROM sit_in_records
+        JOIN registration ON sit_in_records.student_idno = registration.IDNO
+        WHERE sit_in_records.feedback IS NOT NULL
+        ORDER BY sit_in_records.sit_in_time DESC
+    """)
+
+    feedback_records = cursor.fetchall()
+    close_db(conn)
+
+    # Render the feedback report page
+    return render_template('admin_feedback_report.html', feedback_records=feedback_records)
 
 if __name__ == '__main__':
     app.run(debug=True)
