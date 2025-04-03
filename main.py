@@ -437,6 +437,7 @@ def record_sit_in(idno):
     flash("Sit-in recorded successfully.", "success")
     return redirect(url_for('current_sit_in_records'))
 
+#sit in records
 @app.route('/admin/current_sit_in_records')
 def current_sit_in_records():
     if 'admin_username' not in session:
@@ -446,7 +447,8 @@ def current_sit_in_records():
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute("""
-        SELECT sit_in_records.*, registration.Firstname, registration.Midname, registration.Lastname
+        SELECT sit_in_records.*, registration.Firstname, registration.Midname, 
+            registration.Lastname, registration.Year_level
         FROM sit_in_records
         JOIN registration ON sit_in_records.student_idno = registration.IDNO
         WHERE sit_in_records.time_out IS NULL
@@ -580,6 +582,30 @@ def admin_sit_in_history():
 
     return render_template('admin_sit_in_history.html', sit_in_records=sit_in_records)
 
+#delete history
+@app.route('/admin/delete_all_history', methods=['POST'])
+def delete_all_history():
+    if 'admin_username' not in session:
+        flash("You must log in as an admin to perform this action.", "error")
+        return redirect(url_for('admin_login'))
+
+    conn = get_db()
+    cursor = conn.cursor()
+
+    try:
+        # Delete all records from sit_in_records
+        cursor.execute("DELETE FROM sit_in_records")
+        conn.commit()
+        flash("All sit-in history has been successfully deleted.", "success")
+    except sqlite3.Error as e:
+        conn.rollback()
+        flash(f"Failed to delete history: {str(e)}", "error")
+    finally:
+        close_db(conn)
+
+    return redirect(url_for('admin_sit_in_history'))
+
+#feedback
 @app.route('/admin/feedback_report')
 def admin_feedback_report():
     if 'admin_username' not in session:

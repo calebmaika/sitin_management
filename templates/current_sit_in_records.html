@@ -10,6 +10,7 @@
             <tr class="w3-black">
                 <th>ID Number</th>
                 <th>Name</th>
+                <th>Level</th>  <!-- Added this header -->
                 <th>Lab Room</th>
                 <th>Purpose</th>
                 <th>Time In</th>
@@ -21,6 +22,7 @@
             <tr>
                 <td>{{ record.student_idno }}</td>
                 <td>{{ record.Firstname }} {{ record.Midname }} {{ record.Lastname }}</td>
+                <td>{{ record.Year_level }}</td>  <!-- Added this cell -->
                 <td>{{ record.lab_room }}</td>
                 <td>{{ record.purpose }}</td>
                 <td>
