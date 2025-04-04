@@ -385,7 +385,7 @@ def admin_logout():
     flash("You have been logged out.", "info")
     return redirect(url_for('admin_login'))
 
-
+#studentlist
 @app.route('/admin/studentlist')
 def admin_studentlist():
     if 'admin_username' not in session:
@@ -568,16 +568,39 @@ def admin_sit_in_history():
         flash("You must log in as an admin to access this page.", "error")
         return redirect(url_for('admin_login'))
 
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("""
-        SELECT sit_in_records.*, registration.Firstname, registration.Midname, registration.Lastname
+    # Get filter parameters from request
+    lab_room = request.args.get('lab_room')
+    purpose = request.args.get('purpose')
+    year_level = request.args.get('Year_level')
+
+    query = """
+        SELECT sit_in_records.*, registration.Firstname, registration.Midname, 
+               registration.Lastname, registration.Year_level
         FROM sit_in_records
         JOIN registration ON sit_in_records.student_idno = registration.IDNO
-        ORDER BY sit_in_records.sit_in_time DESC
-    """)
-    sit_in_records = cursor.fetchall()
-
+    """
+    
+    conditions = []
+    params = []
+    
+    if lab_room:
+        conditions.append("sit_in_records.lab_room = ?")
+        params.append(lab_room)
+    
+    if purpose:
+        conditions.append("sit_in_records.purpose = ?")
+        params.append(purpose)
+    
+    if year_level:
+        conditions.append("registration.Year_level = ?")
+        params.append(year_level)
+    
+    if conditions:
+        query += " WHERE " + " AND ".join(conditions)
+    
+    query += " ORDER BY sit_in_records.sit_in_time DESC"
+    conn = get_db()
+    sit_in_records = conn.execute(query, tuple(params)).fetchall()
     close_db(conn)
 
     return render_template('admin_sit_in_history.html', sit_in_records=sit_in_records)
@@ -629,6 +652,27 @@ def admin_feedback_report():
 
     # Render the feedback report page
     return render_template('admin_feedback_report.html', feedback_records=feedback_records)
+
+#reset session action
+@app.route('/admin/reset_sessions/<int:idno>', methods=['POST'])
+def reset_student_sessions(idno):
+    if 'admin_username' not in session:
+        flash("You must log in as an admin to perform this action.", "error")
+        return redirect(url_for('admin_login'))
+
+    conn = get_db()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("UPDATE registration SET sessions = 30 WHERE IDNO = ?", (idno,))
+        conn.commit()
+        flash("Sessions reset successfully to 30.", "success")
+    except sqlite3.Error as e:
+        conn.rollback()
+        flash(f"Error resetting sessions: {str(e)}", "error")
+    finally:
+        close_db(conn)
+
+    return redirect(url_for('admin_studentlist'))
 
 if __name__ == '__main__':
     app.run(debug=True)

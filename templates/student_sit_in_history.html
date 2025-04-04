@@ -38,8 +38,8 @@
                 <td>{{ record.time_out if record.time_out else 'Active' }}</td>
                 <td>
                     <!-- Feedback Button -->
-                    <button onclick="openFeedbackModal('{{ record.id }}', '{{ record.feedback if record.feedback else '' }}')" 
-                            class="w3-button w3-blue w3-round">
+                    <button onclick="openFeedbackModal('{{ record.id }}', `{{ record.feedback if record.feedback else '' }}`)" 
+                        class="w3-button w3-blue w3-round">
                         {{ 'Edit Feedback' if record.feedback else 'Feedback' }}
                     </button>
                 </td>
@@ -78,7 +78,7 @@
 
 <script>
     // Function to open the feedback modal
-    function openFeedbackModal(sitInId, feedback) {
+    function openFeedbackModal(sitInId, feedback) { 
         document.getElementById('sit_in_id').value = sitInId;
         document.getElementById('comment').value = feedback || '';
         document.getElementById('feedbackModal').style.display = 'block';
