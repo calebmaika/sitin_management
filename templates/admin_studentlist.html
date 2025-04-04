@@ -2,7 +2,19 @@
 
 {% block content %}
 <div class="w3-container w3-margin-top">
-    <h2>Student List</h2>
+    <div class="w3-row">
+        <div class="w3-col m6">
+            <h2>Student List</h2>
+        </div>
+        <div class="w3-col m6 w3-right-align">
+            <form method="POST" action="{{ url_for('reset_all_sessions') }}" style="display: inline;">
+                <button type="button" onclick="confirmResetAll()" class="w3-button w3-green w3-round">
+                    <i class="fa fa-refresh"></i> Reset All Sessions
+                </button>
+            </form>
+        </div>
+    </div>
+
     <table class="w3-table w3-bordered w3-striped">
         <thead>
             <tr class="w3-black">
@@ -52,6 +64,15 @@
         </tbody>
     </table>
 </div>
+
+<script>
+    function confirmResetAll() {
+        if (confirm("Are you sure you want to reset ALL student sessions to 30?")) {
+            // Submit the form if confirmed
+            event.target.closest('form').submit();
+        }
+    }
+</script>
 
 <style>
     .w3-dropdown-hover button {

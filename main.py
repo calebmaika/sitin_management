@@ -653,7 +653,28 @@ def admin_feedback_report():
     # Render the feedback report page
     return render_template('admin_feedback_report.html', feedback_records=feedback_records)
 
-#reset session action
+#reset all sessions
+@app.route('/admin/reset_all_sessions', methods=['POST'])
+def reset_all_sessions():
+    if 'admin_username' not in session:
+        flash("You must log in as an admin to perform this action.", "error")
+        return redirect(url_for('admin_login'))
+
+    conn = get_db()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("UPDATE registration SET sessions = 30")
+        conn.commit()
+        flash("All student sessions have been reset to 30.", "success")
+    except sqlite3.Error as e:
+        conn.rollback()
+        flash(f"Error resetting sessions: {str(e)}", "error")
+    finally:
+        close_db(conn)
+
+    return redirect(url_for('admin_studentlist'))
+
+#reset session action per student
 @app.route('/admin/reset_sessions/<int:idno>', methods=['POST'])
 def reset_student_sessions(idno):
     if 'admin_username' not in session:
