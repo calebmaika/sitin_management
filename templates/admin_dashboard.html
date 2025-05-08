@@ -1,0 +1,109 @@
+{% extends 'admin_base.html' %}
+
+{% block content %}
+<div class="w3-container w3-margin-top">
+    <!-- Search Form -->
+    <form action="/admin/dashboard" method="post">
+        <div style="display: flex; align-items: center;">
+            <input type="text" id="idno" name="idno" class="w3-input w3-border w3-round" placeholder="Search ID number" required>
+            <button type="submit" class="w3-button w3-black w3-round" style="margin-left: 10px;">Search</button>
+        </div>
+    </form>
+
+    {% if search_results %}
+    <!-- sit in form -->  
+    <div id="sitInModal" class="w3-modal" style="display: block;">
+        <div class="w3-modal-content w3-card-4 w3-animate-top" style="max-width: 600px;">
+            <header class="w3-container w3-black">
+                <span onclick="document.getElementById('sitInModal').style.display='none'" 
+                    class="w3-button w3-display-topright">&times;</span>
+                <h4>Sit-in Form</h4>
+            </header>
+            <div class="w3-container">
+                <div style="display: flex; align-items: flex-start; margin-top: 20px;">
+                    <!-- Student Details -->
+                    <div style="flex: 1;">
+                        <p><strong>ID Number:</strong> {{ search_results.IDNO }}</p>
+                        <p><strong>Name:</strong> {{ search_results.Firstname }} {{ search_results.Midname }} {{ search_results.Lastname }}</p>
+                        <p><strong>Course & Year Level:</strong> {{ search_results.Course }} {{ search_results.Year_level }}</p>
+                        <p><strong>Sessions:</strong> {{ search_results.sessions }}</p>
+                    </div>
+                </div>
+
+                <form action="{{ url_for('record_sit_in', idno=search_results.IDNO) }}" method="POST">
+                    <div class="w3-row w3-margin-top">
+                        <div class="w3-col s12">
+                            <label for="lab_room"><strong>Lab Room:</strong></label>
+                            <select id="lab_room" name="lab_room" class="w3-select w3-border w3-round" required>
+                                <option value="" disabled selected>Select Lab Room</option>
+                                <option value="517">517</option>
+                                <option value="524">524</option>
+                                <option value="526">526</option>
+                                <option value="528">528</option>
+                                <option value="530">530</option>
+                                <option value="542">542</option>
+                                <option value="544">544</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="w3-row w3-margin-top">
+                        <div class="w3-col s12">
+                            <label for="purpose"><strong>Purpose:</strong></label>
+                            <select id="purpose" name="purpose" class="w3-select w3-border w3-round" required>
+                                <option value="" disabled selected>Select Purpose</option>
+                                <option value="C Programming">C Programming</option>
+                                <option value="System Integration & Architecture">System Integration & Architecture</option>
+                                <option value="Embedded Systems & IOT">Embedded Systems & IOT</option>
+                                <option value="Digital Logic & Design">Digital Logic & Design</option>
+                                <option value="Computer Application">Computer Application</option>
+                                <option value="Database">Database</option>
+                                <option value="Project Management">Project Management</option>
+                                <option value="Python Programming">Python Programming</option>
+                                <option value="Mobile Application">Mobile Application</option>
+                                <option value="Others">Others</option>  
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="w3-row w3-margin-top">
+                        <div class="w3-col s12" style="display: flex; justify-content: space-between;">
+                            <button type="submit" class="w3-button w3-black w3-round" style="flex: 1; margin-right: 10px;">Sit In</button>
+                            <button onclick="document.getElementById('sitInModal').style.display='none'" 
+                                    class="w3-button w3-red w3-round" style="flex: 1;">Close</button>
+                        </div>
+                    </div>                    
+                </form>
+            </div>
+            <footer class="w3-container w3-padding w3-light-grey">
+            </footer>
+        </div>
+    </div>
+
+    <!-- {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div id="toast" class="toast w3-text-white w3-padding w3-round-large w3-center w3-margin-top w3-card-4 w3-animate-opacity" 
+        style="background-color: #f44336; 
+        color: white; 
+        width: 20%; 
+        margin-bottom: 20px;
+        position: fixed; 
+        bottom: 0; 
+        right: 10; 
+        left: 10;">
+            {% for category, message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+    {% endwith %} -->
+
+    <script>
+        // Automatically open the modal when search results are available
+        document.getElementById('sitInModal').style.display = 'block';
+    </script>
+    {% elif request.method == 'POST' %}
+    <p class="w3-center w3-text-grey">No student found with the provided ID number.</p>
+    {% endif %}
+</div>
+{% endblock %}

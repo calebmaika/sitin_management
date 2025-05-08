@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="w3-container" 
+    style="height: 100vh; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            background-image: url('/static/img/uc.jpg');
+            background-size: cover; 
+            background-position: center;">
+    <div class="w3-card-4 w3-animate-top w3-round-large w3-light-pale-blue" style="max-width: 600px; width: 100%; padding: 32px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+        <h2 class="w3-center w3-text-blue w3-margin-bottom">Sign Up</h2>
+        
+        <form action="/signup" method="post">
+            <div class="w3-row">
+                <div class="w3-col l6 s12">
+                    <label for="IDNO" class="w3-text-grey">ID Number</label>
+                    <input type="text" id="IDNO" name="IDNO" class="w3-input w3-border w3-round" placeholder="Enter your ID number" required>
+                </div>
+                <div class="w3-col l6 s12" style="padding-left: 15px;">
+                    <label for="Firstname" class="w3-text-grey">First Name</label>
+                    <input type="text" id="Firstname" name="Firstname" class="w3-input w3-border w3-round" placeholder="Enter your first name" required>
+                </div>
+            </div>
+
+            <div class="w3-row">
+                <div class="w3-col l6 s12">
+                    <label for="Lastname" class="w3-text-grey">Last Name</label>
+                    <input type="text" id="Lastname" name="Lastname" class="w3-input w3-border w3-round" placeholder="Enter your last name" required>
+                </div>
+                <div class="w3-col l6 s12" style="padding-left: 15px;">
+                    <label for="Midname" class="w3-text-grey">Middle Name</label>
+                    <input type="text" id="Midname" name="Midname" class="w3-input w3-border w3-round" placeholder="Enter your middle name">
+                </div>
+            </div>
+
+            <div class="w3-row">
+                <div class="w3-col l6 s12">
+                    <label for="Course" class="w3-text-grey">Course</label>
+                    <select id="Course" name="Course" class="w3-select w3-border w3-round" required>
+                        <option value="" disabled selected>Select Course</option>
+                        <option value="BSIT">BSIT</option>
+                        <option value="BSCS">BSCS</option>
+                        <option value="BSCPE">BSCPE</option>
+                        <option value="BSIDT">BSIDT</option>
+                        <option value="BSED">BSED</option>
+                    </select>
+                </div>
+                <div class="w3-col l6 s12" style="padding-left: 15px;">
+                    <label for="Year_level" class="w3-text-grey">Year Level</label>
+                    <select id="Year_level" name="level" class="w3-select w3-border w3-round" required>
+                        <option value="" disabled selected>Select Level</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="w3-row">
+                <div class="w3-col s12">
+                    <label for="email" class="w3-text-grey">Email</label>
+                    <input type="text" id="email" name="email" class="w3-input w3-border w3-round" placeholder="Enter your Email" required>
+                </div>
+            </div>
+            <div class="w3-row">
+                <div class="w3-col s12">
+                    <label for="address" class="w3-text-grey">Address</label>
+                    <input type="text" id="address" name="address" class="w3-input w3-border w3-round" placeholder="Enter your Address" required>
+                </div>
+            </div>
+            <div class="w3-row">
+                <div class="w3-col l6 s12">
+                    <label for="username" class="w3-text-grey">Username</label>
+                    <input type="text" id="username" name="username" class="w3-input w3-border w3-round" placeholder="Choose a username" required>
+                </div>
+                <div class="w3-col l6 s12" style="padding-left: 15px;">
+                    <label for="password" class="w3-text-grey">Password</label>
+                    <input type="password" id="password" name="password" class="w3-input w3-border w3-round" placeholder="Choose a password" required>
+                </div>
+            </div>
+
+            <div class="w3-row">
+                <div class="w3-col s12">
+                    <label for="confirm_password" class="w3-text-grey">Confirm Password</label>
+                    <input type="password" id="confirm_password" name="confirm_password" class="w3-input w3-border w3-round" placeholder="Confirm your password" required>
+                </div>
+            </div>
+
+            {% if message %}
+            <p class="w3-text-red w3-center">{{ message }}</p>
+            {% endif %}
+
+            <p>
+                <button type="submit" class="w3-button w3-block w3-blue w3-hover-light-blue w3-round-large">Sign Up</button>
+            </p>
+
+            <p class="w3-center w3-text-grey">
+                <small>Already have an account? <a href="/login" class="w3-text-blue w3-hover-text-light-blue">Login</a></small>
+            </p>
+        </form>
+    </div>
+    <!-- {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div id="toast" class="toast w3-text-white w3-padding w3-round-large w3-center w3-margin-top w3-card-4 w3-animate-opacity" 
+        style="background-color: #f44336; 
+                color: white; 
+                width: 20%; 
+                margin-bottom: 20px;
+                position: fixed; 
+                bottom: 0; 
+                right: 10; 
+                left: 10;">
+            {% for category, message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+    {% endwith %} -->
+</div>
+<script>
+    document.getElementById('confirm_password').addEventListener('input', function() {
+        var password = document.getElementById('password').value;
+        var confirmPassword = document.getElementById('confirm_password').value;
+        var errorMessage = document.getElementById('password_error');
+
+        if (password !== confirmPassword) {
+            errorMessage.style.display = 'block';
+            errorMessage.textContent = 'Passwords do not match!';
+        } else {
+            errorMessage.style.display = 'none';
+        }
+    });
+    window.onload = function() {
+        var toast = document.getElementById('toast');
+        if (toast) {
+            setTimeout(function() {
+                toast.style.opacity = '0'; 
+                setTimeout(function() {
+                    toast.style.display = 'none'; 
+                }, 500); 
+            }, 3000);
+        }
+    };
+</script>
+{% endblock %}

@@ -1,0 +1,169 @@
+{% extends 'admin_base.html' %}
+
+{% block content %}
+<div class="w3-container w3-margin-top">
+    <div class="w3-row">
+        <div class="w3-col m6">
+            <h2>Student Leaderboard</h2>
+            <p class="w3-small w3-text-grey">Points System: 3 points = 1 bonus session</p>
+        </div>
+        <div class="w3-col m6 w3-right-align">
+            <button onclick="printLeaderboard()" class="w3-button w3-black w3-round">
+                <i class="fa fa-print"></i> Print
+            </button>
+        </div>
+    </div>
+
+    <div class="w3-panel w3-light-grey w3-leftbar w3-border-grey">
+        <p><i class="fa fa-info-circle"></i> Students are ranked by total points. Hover over points to see session details.</p>
+    </div>
+
+    <table class="w3-table w3-bordered w3-striped w3-hoverable" id="leaderboardTable">
+        <thead>
+            <tr class="w3-black">
+                <th>Rank</th>
+                <th>ID Number</th>
+                <th>Name</th>
+                <th>Year Level</th>
+                <th>Total Points</th>
+                <th>Bonus Sessions</th>
+                <!-- <th>Progress</th> -->
+                <th>Current Sessions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in leaderboard %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ student.IDNO }}</td>
+                <td>{{ student.Lastname }}, {{ student.Firstname }} {{ student.Midname|first }}.</td>
+                <td>{{ student.Year_level }}</td>
+                <td class="w3-tooltip">
+                    {{ student.total_points }}
+                    <span class="w3-text w3-tag w3-round w3-animate-opacity w3-white w3-border" 
+                          style="position:absolute;left:0;bottom:25px;width:200px">
+                        {{ student.total_points }} point(s) total<br>
+                        {{ student.bonus_sessions_earned }} bonus session(s) earned
+                    </span>
+                </td>
+                <td>{{ student.bonus_sessions_earned }}</td>
+                <!-- <td>
+                    {% if student.points_to_next_bonus > 0 %}
+                    <div class="w3-light-grey w3-round">
+                        <div class="w3-container w3-blue w3-round" 
+                             style="width:{{ ((3 - student.points_to_next_bonus) / 3) * 100 }}%">
+                            {{ 3 - student.points_to_next_bonus }}/3
+                        </div>
+                    </div>
+                    {% else %}
+                    <span class="w3-tag w3-green w3-round">Ready for bonus</span>
+                    {% endif %}
+                </td> -->
+                <td>
+                    <span class="w3-badge {% if student.sessions > 5 %}w3-green{% elif student.sessions > 0 %}w3-orange{% else %}w3-red{% endif %}">
+                        {{ student.sessions }}
+                    </span>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="w3-container w3-center w3-margin-top">
+        <div class="w3-panel w3-light-grey w3-leftbar w3-rightbar w3-border-grey">
+            <h4>Points Summary</h4>
+            <div class="w3-row-padding">
+                <div class="w3-third">
+                    <div class="w3-card w3-padding">
+                        <h3>{{ leaderboard|sum(attribute='total_points') }}</h3>
+                        <p>Total Points Awarded</p>
+                    </div>
+                </div>
+                <div class="w3-third">
+                    <div class="w3-card w3-padding">
+                        <h3>{{ leaderboard|sum(attribute='bonus_sessions_earned') }}</h3>
+                        <p>Bonus Sessions Given</p>
+                    </div>
+                </div>
+                <div class="w3-third">
+                    <div class="w3-card w3-padding">
+                        <h3>{{ (leaderboard|sum(attribute='total_points') / leaderboard|length if leaderboard|length > 0 else 0)|round(1) }}</h3>
+                        <p>Average Points per Student</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function printLeaderboard() {
+        const printWindow = window.open('', '_blank');
+        const rows = Array.from(document.querySelectorAll("#leaderboardTable tbody tr"));
+        
+        printWindow.document.write(`
+            <html>
+                <head>
+                    <title>Student Leaderboard Report</title>
+                    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+                    <style>
+                        @media print {
+                            body { font-size: 11pt; }
+                            table { width: 100%; border-collapse: collapse; }
+                            th { background-color: #000 !important; color: white !important; }
+                            td, th { border: 1px solid #ddd; padding: 8px; }
+                            .summary { margin-top: 20px; }
+                            @page { size: landscape; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="w3-container">
+                        <h2 class="w3-center">Student Leaderboard Report</h2>
+                        <p class="w3-center w3-small">Generated on: ${new Date().toLocaleString()}</p>
+                        
+                        <table class="w3-table w3-bordered">
+                            <thead>
+                                <tr class="w3-black">
+                                    <th>Rank</th>
+                                    <th>ID Number</th>
+                                    <th>Name</th>
+                                    <th>Year</th>
+                                    <th>Points</th>
+                                    <th>Bonus</th>
+                                    <th>Sessions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${rows.map(row => `
+                                    <tr>
+                                        <td>${row.cells[0].textContent}</td>
+                                        <td>${row.cells[1].textContent}</td>
+                                        <td>${row.cells[2].textContent}</td>
+                                        <td>${row.cells[3].textContent}</td>
+                                        <td>${row.cells[4].textContent}</td>
+                                        <td>${row.cells[5].textContent}</td>
+                                        <td>${row.cells[7].textContent}</td>
+                                    </tr>
+                                `).join("")}
+                            </tbody>
+                        </table>
+                        
+                        <div class="w3-container summary">
+                            <h4>Summary Statistics</h4>
+                            <p>Total Points Awarded: ${rows.length > 0 ? 
+                                rows.reduce((sum, row) => sum + parseInt(row.cells[4].textContent), 0) : 0}</p>
+                            <p>Total Bonus Sessions Given: ${rows.length > 0 ? 
+                                rows.reduce((sum, row) => sum + parseInt(row.cells[5].textContent), 0) : 0}</p>
+                            <p>Average Points per Student: ${rows.length > 0 ? 
+                                (rows.reduce((sum, row) => sum + parseInt(row.cells[4].textContent), 0) / rows.length).toFixed(1) : 0}</p>
+                        </div>
+                    </div>
+                </body>
+            </html>
+        `);
+        printWindow.document.close();
+        printWindow.print();
+    }
+</script>
+{% endblock %}

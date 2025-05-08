@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script>
+        function toggleSidebar() {
+            var sidebar = document.getElementById("sidebar");
+            sidebar.classList.toggle("open");
+        }
+    </script>
+    <style>
+        body {
+            display: flex;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            background-color: #333;
+            color: white;
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding: 15px;
+            transition: 0.3s;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .sidebar a {
+            display: block;
+            color: white;
+            padding: 10px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover {
+            background-color: #575757;
+        }
+
+        .sidebar .toggle-btn {
+            display: none;
+            position: absolute;
+            top: 15px;
+            right: -35px;
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .content {
+            margin-left: 250px;
+            padding: 20px;
+            width: 100%;
+            transition: 0.3s;
+        }
+
+        @media screen and (max-width: 768px) {
+            .sidebar {
+                width: 0;
+                overflow: hidden;
+            }
+
+            .sidebar.open {
+                width: 250px;
+            }
+
+            .content {
+                margin-left: 0;
+            }
+
+            .sidebar .toggle-btn {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar (Admin Only) -->
+    <div class="sidebar" id="sidebar">
+        <div class="w3-center">
+            <img src="{{ url_for('static', filename='img/ccslogo.png') }}" alt="Logo" 
+                style="max-width: 100px; margin-bottom: 20px;">
+        </div>  
+        <a href="{{ url_for('admin_dashboard') }}">Home</a>
+        <a href="{{ url_for('admin_leaderboard') }}">Leaderboard</a>
+        <a href="{{ url_for('admin_announcement') }}">Announcement</a>
+        <a href="{{ url_for('admin_studentlist') }}">Student List</a>
+        <a href="{{ url_for('current_sit_in_records') }}" >Active Sit-In Records</a>
+        <a href="{{ url_for('admin_sit_in_history') }}">Sit-In History</a>
+        <a href="{{ url_for('admin_resources') }}">Lab Resources</a>
+        <a href="{{ url_for('admin_feedback_report') }}">Feedback Report</a>
+        <a href="{{ url_for('admin_login') }}" style="color: red;">Logout</a>
+
+        <span class="toggle-btn" onclick="toggleSidebar()">☰</span>
+    </div>
+
+    <!-- Page Content -->
+    <div class="content">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,38 @@
+{% extends 'admin_base.html' %}
+
+{% block content %}
+<div class="w3-container w3-margin-top">
+    <h2>Student Feedback Report</h2>
+
+    {% if feedback_records %}
+    <table class="w3-table w3-bordered w3-striped">
+        <thead>
+            <tr class="w3-black">
+                <th>ID Number</th>
+                <th>Name</th>
+                <th>Lab Room</th>
+                <th>Purpose</th>
+                <th>Time In</th>
+                <th>Time Out</th>
+                <th>Feedback</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in feedback_records %}
+            <tr>
+                <td>{{ record.student_idno }}</td>
+                <td>{{ record.Firstname }} {{ record.Midname }} {{ record.Lastname }}</td>
+                <td>{{ record.lab_room }}</td>
+                <td>{{ record.purpose }}</td>
+                <td>{{ record.sit_in_time }}</td>
+                <td>{{ record.time_out if record.time_out else 'Active' }}</td>
+                <td>{{ record.feedback }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="w3-center w3-text-grey">No feedback found.</p>
+    {% endif %}
+</div>
+{% endblock %}

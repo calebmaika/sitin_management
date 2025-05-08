@@ -1,0 +1,126 @@
+{% extends 'admin_base.html' %}
+
+{% block content %}
+<div class="w3-container w3-margin-top">
+    <div class="w3-row">
+        <div class="w3-col m6">
+            <h2>Student List</h2>
+        </div>
+        <div class="w3-col m6 w3-right-align">
+            <form method="POST" action="{{ url_for('reset_all_sessions') }}" style="display: inline;">
+                <button type="button" onclick="confirmResetAll()" class="w3-button w3-green w3-round">
+                    <i class="fa fa-refresh"></i> Reset All Sessions
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <table class="w3-table w3-bordered w3-striped">
+        <thead>
+            <tr class="w3-black">
+                <th>ID Number</th>
+                <th>Profile Picture</th>
+                <th>Name</th>
+                <th>Course</th>
+                <th>Year Level</th>
+                <th>Email</th>
+                <th>Username</th>
+                <th>Address</th>
+                <th>Sessions</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in students %}
+            <tr>
+                <td>{{ student.IDNO }}</td>
+                <td style="padding-left: 30px;">
+                    <img src="{{ url_for('static', filename='uploads/' + (student.profile_pic if student.profile_pic else 'default.png')) }}" 
+                         alt="Profile Picture" 
+                         style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
+                </td>
+                <td>{{ student.Firstname }} {{ student.Midname }} {{ student.Lastname }}</td>
+                <td>{{ student.Course }}</td>
+                <td>{{ student.Year_level }}</td>
+                <td>{{ student.email }}</td>
+                <td>{{ student.username }}</td>
+                <td>{{ student.address }}</td>
+                <td>{{ student.sessions }}</td>
+                <td>
+                    <div class="action-menu">
+                        <button class="w3-button w3-round menu-trigger" onclick="toggleMenu(this)">⋮</button>
+                        <div class="w3-dropdown-content w3-bar-block w3-border menu-content" style="right:0; display:none;">
+                            <form action="{{ url_for('reset_student_sessions', idno=student.IDNO) }}" method="POST" class="w3-bar-item">
+                                <button type="submit" class="w3-button" onclick="return confirm('Reset sessions to 30 for {{ student.Firstname }}?')">Reset Sessions</button>
+                            </form>
+                            <form action="{{ url_for('admin_deletestudent', idno=student.IDNO) }}" method="POST" class="w3-bar-item">
+                                <button type="submit" class="w3-button w3-red" onclick="return confirm('Permanently delete {{ student.Firstname }}?')">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function confirmResetAll() {
+        if (confirm("Are you sure you want to reset ALL student sessions to 30?")) {
+            event.target.closest('form').submit();
+        }
+    }
+
+    function toggleMenu(button) {
+        // Close all other open menus first
+        document.querySelectorAll('.menu-content').forEach(menu => {
+            if (menu !== button.nextElementSibling && menu.style.display === 'block') {
+                menu.style.display = 'none';
+            }
+        });
+        
+        // Toggle the clicked menu
+        const menu = button.nextElementSibling;
+        menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    }
+
+    // Close menu when clicking outside
+    document.addEventListener('click', function(event) {
+        if (!event.target.closest('.action-menu')) {
+            document.querySelectorAll('.menu-content').forEach(menu => {
+                menu.style.display = 'none';
+            });
+        }
+    });
+</script>
+
+<style>
+    .action-menu {
+        position: relative;
+        display: inline-block;
+    }
+    .menu-trigger {
+        min-width: 40px;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+    }
+    .menu-content {
+        position: absolute;
+        z-index: 1;
+        min-width: 150px;
+    }
+    .menu-content button {
+        width: 100%;
+        text-align: left;
+        padding: 8px 16px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+    }
+    .menu-content button:hover {
+        background-color: #f1f1f1;
+    }
+</style>
+{% endblock %}

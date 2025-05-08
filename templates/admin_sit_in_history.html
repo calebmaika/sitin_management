@@ -1,0 +1,352 @@
+{% extends 'admin_base.html' %}
+
+{% block content %}
+<div class="w3-container w3-margin-top">
+    <div class="w3-row">
+        <div class="w3-col m6">
+            <h2>Sit-In History</h2>
+        </div>
+        <div class="w3-col m6 w3-right-align">
+            <button onclick="document.getElementById('filterModal').style.display='block'" 
+                    class="w3-button w3-blue w3-round">
+                <i class="fa fa-filter"></i> Filter Records
+            </button>
+            <form id="deleteAllForm" method="POST" action="{{ url_for('delete_all_history') }}" style="display: inline;">
+                <button type="button" onclick="confirmDeleteAll()" class="w3-button w3-red w3-round">
+                    <i class="fa fa-trash"></i> Delete All History
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Filter Modal -->
+    <div id="filterModal" class="w3-modal">
+        <div class="w3-modal-content w3-card-4 w3-animate-zoom" style="max-width:600px">
+            <div class="w3-center">
+                <span onclick="document.getElementById('filterModal').style.display='none'" 
+                      class="w3-button w3-display-topright">&times;</span>
+                <h3>Filter Records</h3>
+            </div>
+            <form class="w3-container" id="filterForm">
+                <div class="w3-section">
+                    <label><b>Lab Room</b></label>
+                    <select id="lab_room" name="lab_room" class="w3-select w3-border w3-round" required>
+                        <option value="">Select Lab Room</option>
+                        <option value="517">517</option>
+                        <option value="524">524</option>
+                        <option value="526">526</option>
+                        <option value="528">528</option>
+                        <option value="530">530</option>
+                        <option value="542">542</option>
+                        <option value="544">544</option>
+                    </select>
+
+                    <label class="w3-margin-top"><b>Purpose</b></label>
+                    <select id="purpose" name="purpose" class="w3-select w3-border w3-round" required>
+                        <option value="">Select Purpose</option>
+                        <option value="C Programming">C Programming</option>
+                        <option value="System Integration & Architecture">System Integration & Architecture</option>
+                        <option value="Embedded Systems & IOT">Embedded Systems & IOT</option>
+                        <option value="Digital Logic & Design">Digital Logic & Design</option>
+                        <option value="Computer Application">Computer Application</option>
+                        <option value="Database">Database</option>
+                        <option value="Project Management">Project Management</option>
+                        <option value="Python Programming">Python Programming</option>
+                        <option value="Mobile Application">Mobile Application</option>
+                        <option value="Others">Others</option>  
+                    </select>
+
+                    <label class="w3-margin-top"><b>Year Level</b></label>
+                    <select class="w3-select w3-border" name="Year_level">
+                        <option value="">All Levels</option>
+                        <option value="1">1st Year</option>
+                        <option value="2">2nd Year</option>
+                        <option value="3">3rd Year</option>
+                        <option value="4">4th Year</option>
+                    </select>
+
+                    <div class="w3-margin-top">
+                        <button type="button" onclick="applyFilters()" class="w3-button w3-green w3-round">
+                            Apply Filters
+                        </button>
+                        <button type="button" onclick="resetFilters()" class="w3-button w3-gray w3-round">
+                            Reset
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <table id="sit_in_table" class="w3-table w3-bordered w3-striped">
+        <thead>
+            <tr class="w3-black">
+                <th>ID Number</th>
+                <th>Name</th>
+                <th>Level</th>
+                <th>Lab Room</th>
+                <th>Purpose</th>
+                <th>Time In</th>
+                <th>Time Out</th>
+                <th>Points</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in sit_in_records %}
+            <tr data-lab-room="{{ record.lab_room }}" 
+                data-purpose="{{ record.purpose }}" 
+                data-year-level="{{ record.Year_level }}">
+                <td>{{ record.student_idno }}</td>
+                <td>{{ record.Firstname }} {{ record.Midname }} {{ record.Lastname }}</td>
+                <td>{{ record.Year_level }}</td>
+                <td>{{ record.lab_room }}</td>
+                <td>{{ record.purpose }}</td>
+                <td>{{ record.sit_in_time }}</td>
+                <td>{{ record.time_out if record.time_out else 'Active' }}</td>
+                <td>{{ record.points if record.points else '-' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Export buttons -->
+    <div class="w3-margin-top">
+        <button onclick="exportToPDF()" class="w3-button w3-black w3-round">Export to PDF</button>
+        <button onclick="exportToCSV()" class="w3-button w3-black w3-round">Export to CSV</button>
+        <button onclick="exportToExcel()" class="w3-button w3-black w3-round">Export to Excel</button>
+        <button onclick="printTable()" class="w3-button w3-black w3-round">Print</button>
+    </div>
+</div>
+
+<script>
+    // Filter Functions
+    function applyFilters() {
+        const labRoom = document.querySelector('select[name="lab_room"]').value;
+        const purpose = document.querySelector('select[name="purpose"]').value;
+        const yearLevel = document.querySelector('select[name="Year_level"]').value;
+
+        document.querySelectorAll("#sit_in_table tbody tr").forEach(row => {
+            const showRow = (
+                (labRoom === "" || row.dataset.labRoom === labRoom) &&
+                (purpose === "" || row.dataset.purpose === purpose) &&
+                (yearLevel === "" || row.dataset.yearLevel === yearLevel)
+            );
+            row.style.display = showRow ? "" : "none";
+        });
+        document.getElementById('filterModal').style.display = 'none';
+    }
+
+    function resetFilters() {
+        document.getElementById('filterForm').reset();
+        document.querySelectorAll("#sit_in_table tbody tr").forEach(row => {
+            row.style.display = "";
+        });
+        document.getElementById('filterModal').style.display = 'none';
+    }
+
+    function confirmDeleteAll() {
+        if (confirm("Are you sure you want to delete ALL sit-in history?")) {
+            document.getElementById('deleteAllForm').submit();
+        }
+    }
+
+    // Export Functions with Logos
+    function getCurrentFilters() {
+        return {
+            labRoom: document.querySelector('select[name="lab_room"]').value,
+            purpose: document.querySelector('select[name="purpose"]').value,
+            yearLevel: document.querySelector('select[name="Year_level"]').value
+        };
+    }
+
+    function getReportHeader(filters) {
+        let header = "University of Cebu - Main\n";
+        header += "College of Computer Studies\n";
+        header += "Computer Laboratory Sitin Monitoring System Report\n\n";
+        header += "Filters Applied:\n";
+        if (filters.labRoom) header += `- Lab Room: ${filters.labRoom}\n`;
+        if (filters.purpose) header += `- Purpose: ${filters.purpose}\n`;
+        if (filters.yearLevel) header += `- Year Level: ${filters.yearLevel}\n`;
+        return header;
+    }
+
+    function exportToPDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        const filters = getCurrentFilters();
+        
+        // Add logos (base64 encoded)
+        const ucLogo = "{{ url_for('static', filename='img/uc logo.jpg') }}";
+        const ccsLogo = "{{ url_for('static', filename='img/ccslogo.png') }}";
+        
+        // Add header text
+        doc.setFontSize(12);
+        doc.text("University of Cebu - Main", 105, 15, {align: 'center'});
+        doc.text("College of Computer Studies", 105, 22, {align: 'center'});
+        doc.text("Computer Laboratory Sitin Monitoring System Report", 105, 29, {align: 'center'});
+        
+        // Add filters
+        let yPos = 36;
+        doc.text("Filters Applied:", 105, yPos, {align: 'center'});
+        if (filters.labRoom) {
+            yPos += 7;
+            doc.text(`Lab Room: ${filters.labRoom}`, 105, yPos, {align: 'center'});
+        }
+        if (filters.purpose) {
+            yPos += 7;
+            doc.text(`Purpose: ${filters.purpose}`, 105, yPos, {align: 'center'});
+        }
+        if (filters.yearLevel) {
+            yPos += 7;
+            doc.text(`Year Level: ${filters.yearLevel}`, 105, yPos, {align: 'center'});
+        }
+        
+        // Add table
+        doc.autoTable({
+            html: '#sit_in_table',
+            startY: yPos + 15,
+            styles: { fontSize: 8 },
+            headStyles: { fillColor: [0, 0, 0] }
+        });
+        
+        doc.save('sit_in_history.pdf');
+    }
+
+    function exportToCSV() {
+        const filters = getCurrentFilters();
+        let csv = getReportHeader(filters).replace(/\n/g, '\r\n');
+        
+        const rows = Array.from(document.querySelectorAll("#sit_in_table tr:not([style*='none'])"));
+        csv += '\r\n\r\n' + rows.map(row => 
+            Array.from(row.querySelectorAll("th, td")).map(cell => cell.innerText).join(",")
+        ).join("\r\n");
+        
+        const link = document.createElement("a");
+        link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
+        link.download = "sit_in_history.csv";
+        link.click();
+    }
+
+    function exportToExcel() {
+        const filters = getCurrentFilters();
+        const workbook = XLSX.utils.book_new();
+        
+        // Create header sheet
+        const headerData = [
+            ["University of Cebu - Main"],
+            ["College of Computer Studies"],
+            ["Computer Laboratory Sitin Monitoring System Report"],
+            [""],
+            ["Filters Applied:"],
+            filters.labRoom ? [`Lab Room: ${filters.labRoom}`] : [""],
+            filters.purpose ? [`Purpose: ${filters.purpose}`] : [""],
+            filters.yearLevel ? [`Year Level: ${filters.yearLevel}`] : [""],
+            [""],
+            ["Exported on:", new Date().toLocaleString()]
+        ];
+        
+        XLSX.utils.book_append_sheet(
+            workbook, 
+            XLSX.utils.aoa_to_sheet(headerData), 
+            "Report Info"
+        );
+        
+        // Add main data
+        const table = document.getElementById("sit_in_table");
+        XLSX.utils.book_append_sheet(
+            workbook, 
+            XLSX.utils.table_to_sheet(table), 
+            "Sit-In History"
+        );
+        
+        XLSX.writeFile(workbook, "sit_in_history.xlsx");
+    }
+
+    function printTable() {
+        const filters = getCurrentFilters();
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(`
+            <html>
+                <head>
+                    <title>Sit-In History Report</title>
+                    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+                    <style>
+                        @media print {
+                            .report-header {
+                                text-align: center;
+                                margin-bottom: 20px;
+                                line-height: 1.5;
+                            }
+                            .logo-container {
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                margin-bottom: 15px;
+                            }
+                            .logo-container img {
+                                max-width: 150px;
+                                height: auto;
+                                margin: 0 15px;
+                            }
+                            .report-header h2, .report-header h3, .report-header h4 {
+                                margin: 5px 0;
+                            }
+                            .filters {
+                                margin: 15px 0;
+                                font-style: italic;
+                            }
+                            table {
+                                width: 100%;
+                                border-collapse: collapse;
+                                margin-top: 15px;
+                            }
+                            th, td {
+                                border: 1px solid #ddd;
+                                padding: 8px;
+                                text-align: left;
+                            }
+                            th {
+                                background-color: #000;
+                                color: white;
+                            }
+                            .footer {
+                                margin-top: 20px;
+                                font-size: 0.8em;
+                                color: #666;
+                                text-align: center;
+                            }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="w3-container">
+                        <div class="report-header">
+                            <div class="logo-container">
+                                <img src="{{ url_for('static', filename='img/uc logo.jpg') }}" alt="UC Logo">
+                                <img src="{{ url_for('static', filename='img/ccslogo.png') }}" alt="CCS Logo">
+                            </div>
+                            <h2>University of Cebu - Main</h2>
+                            <h3>College of Computer Studies</h3>
+                            <h4>Computer Laboratory Sitin Monitoring System Report</h4>
+                        </div>
+                        ${document.getElementById('sit_in_table').outerHTML}
+                        <div class="footer">
+                            Generated on: ${new Date().toLocaleString()}
+                        </div>
+                    </div>
+                </body>
+            </html>
+        `);
+        printWindow.document.close();
+        printWindow.print();
+    }
+</script>
+
+<!-- Include required libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+{% endblock %}

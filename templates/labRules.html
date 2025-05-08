@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="w3-bar w3-black w3-card-4" style="padding: 4px 0;">
+    <div class="w3-bar-item w3-right" style="padding: 8px 16px;">
+        <a href="/" class="w3-button w3-black w3-round" style="padding: 4px 12px; font-size: 14px;">Home</a>
+        <a href="/announcements" class="w3-button w3-black w3-round" style="padding: 4px 12px; font-size: 14px;">Announcements</a>
+        <a href="/resources" class="w3-button w3-black w3-round w3-blue" style="padding: 4px 12px; font-size: 14px;">Resources</a>
+        <a href="/edit_profile" class="w3-button w3-black w3-round" style="padding: 4px 12px; font-size: 14px;">Profile</a>
+        <a href="/student_sit_in_history" class="w3-button w3-black w3-round" style="padding: 4px 12px; font-size: 14px;">Sit-In History</a>
+        <a href="/lab_rules" class="w3-button w3-black w3-round" style="padding: 4px 12px; font-size: 14px;">Lab Rules</a>
+        <a href="/logout" class="w3-button w3-red w3-round" style="padding: 4px 12px; font-size: 14px;">Logout</a>
+    </div>
+</div>
+
+<!-- lab rules -->
+<div class="w3-container w3-padding-24" style="max-width: 100%; margin: 0; padding: 24px;">
+    <header class="w3-container w3-black w3-padding-16">
+        <h3 class="w3-center">Laboratory Rules and Regulations</h3>
+    </header>
+
+    <div class="w3-container w3-padding-16">
+        <div class="w3-center" style="padding: 5px;">
+            <img src="{{ url_for('static', filename='img/uc logo.jpg') }}" 
+                 alt="University of Cebu Logo" 
+                 style="max-width: 200px; height: auto; padding-right: 10px;">
+            <img src="{{ url_for('static', filename='img/ccslogo.png') }}" 
+                alt="Logo" 
+                style="max-width: 150px; margin-bottom: 20px; padding-left: 10px;">
+        </div>
+        <h4 class="w3-center">University of Cebu</h4>
+        <h5 class="w3-center">COLLEGE OF INFORMATION & COMPUTER STUDIES</h5>
+
+        <h4 class="w3-center"><strong>LABORATORY RULES AND REGULATIONS</strong></h4>
+        <p>To avoid embarrassment and maintain camaraderie with your friends and superiors at our laboratories, please observe the following:</p>
+
+        <ol>
+            <li>Maintain silence, proper decorum, and discipline inside the laboratory. Mobile phones, walkmans, and other personal equipment must be switched off.</li>
+            <li>Games are not allowed inside the lab. This includes computer-related games, card games, and any other games that may disturb lab operations.</li>
+            <li>Surfing the Internet is allowed only with the permission of the instructor. Downloading and installing software are strictly prohibited.</li>
+            <li>Accessing websites unrelated to coursework (especially pornographic and illicit sites) is strictly prohibited.</li>
+            <li>Deleting computer files and changing the computer’s setup is a major offense.</li>
+            <li>Observe computer time usage carefully. A fifteen-minute allowance is given for each use. Otherwise, the unit will be given to those who wish to "sit-in".</li>
+            <li>Observe proper decorum while inside the laboratory:
+                <ul>
+                    <li>Do not enter the lab unless the instructor is present.</li>
+                    <li>All bags, knapsacks, and similar items must be deposited at the counter.</li>
+                    <li>Follow the seating arrangement assigned by your instructor.</li>
+                    <li>At the end of class, close all software programs.</li>
+                    <li>Return all chairs to their proper places after use.</li>
+                </ul>
+            </li>
+            <li>Chewing gum, eating, drinking, smoking, and vandalism are strictly prohibited inside the lab.</li>
+            <li>Anyone causing a continual disturbance will be asked to leave the lab. Acts or gestures offensive to the members of the community, including public displays of physical intimacy, are not tolerated.</li>
+            <li>Persons exhibiting hostile or threatening behavior—such as yelling, swearing, or disregarding requests made by lab personnel—will be asked to leave the lab.</li>
+            <li>For serious offenses, lab personnel may call the Civil Security Office (CSU) for assistance.</li>
+            <li>Any technical problem or difficulty must be reported immediately to the laboratory supervisor, student assistant, or instructor.</li>
+        </ol>
+
+        <h4 class="w3-center"><strong>DISCIPLINARY ACTION</strong></h4>
+        <ul>
+            <li><strong>First Offense:</strong> The Head, Dean, or OIC recommends suspension from classes through the Guidance Center.</li>
+            <li><strong>Second and Subsequent Offenses:</strong> A recommendation for a heavier sanction will be endorsed to the Guidance Center.</li>
+        </ul>
+    </div>
+</div>
+
+{% endblock %}

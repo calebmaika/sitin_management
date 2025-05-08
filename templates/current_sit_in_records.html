@@ -1,0 +1,82 @@
+{% extends 'admin_base.html' %}
+
+{% block content %}
+<div class="w3-container w3-margin-top">
+    <h2>Current Sit-In Records</h2>
+
+    <!-- Timeout Confirmation Modal -->
+    <div id="timeoutModal" class="w3-modal">
+        <div class="w3-modal-content w3-card-4 w3-animate-zoom" style="max-width:500px">
+            <div class="w3-container">
+                <span onclick="document.getElementById('timeoutModal').style.display='none'" 
+                      class="w3-button w3-display-topright">&times;</span>
+                <h3>Confirm Timeout</h3>
+                <form id="timeoutForm" method="POST" action="">
+                    <div class="w3-section">
+                        <p>Are you sure you want to timeout this student?</p>
+                        <label class="w3-checkbox">
+                            <input type="checkbox" name="award_point" value="1">
+                            <span class="w3-checkmark"></span> Award 1 Point (3 points = 1 bonus session)
+                        </label>
+                        <div class="w3-margin-top">
+                            <button type="submit" class="w3-button w3-red w3-round">Confirm Timeout</button>
+                            <button type="button" onclick="document.getElementById('timeoutModal').style.display='none'" 
+                                    class="w3-button w3-gray w3-round">Cancel</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {% if sit_in_records %}
+    <table class="w3-table w3-bordered w3-striped">
+        <thead>
+            <tr class="w3-black">
+                <th>ID Number</th>
+                <th>Name</th>
+                <th>Level</th>
+                <th>Lab Room</th>
+                <th>Purpose</th>
+                <th>Time In</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in sit_in_records %}
+            <tr>
+                <td>{{ record.student_idno }}</td>
+                <td>{{ record.Firstname }} {{ record.Midname }} {{ record.Lastname }}</td>
+                <td>{{ record.Year_level }}</td>
+                <td>{{ record.lab_room }}</td>
+                <td>{{ record.purpose }}</td>
+                <td>
+                    <span class="utc-time">{{ record.sit_in_time }}</span>
+                    <script>
+                        const utcTime = document.querySelector('.utc-time').textContent;
+                        const localTime = new Date(utcTime).toLocaleString();
+                        document.querySelector('.utc-time').textContent = localTime;
+                    </script>
+                </td>
+                <td>
+                    <button onclick="openTimeoutModal('{{ url_for('timeout_student', id=record.id) }}')" 
+                                                class="w3-button w3-red w3-round">
+                        Timeout
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="w3-center w3-text-grey">No active sit-ins.</p>
+    {% endif %}
+</div>
+
+<script>
+    function openTimeoutModal(actionUrl) {
+        document.getElementById('timeoutForm').action = actionUrl;
+        document.getElementById('timeoutModal').style.display = 'block';
+    }
+</script>
+{% endblock %}

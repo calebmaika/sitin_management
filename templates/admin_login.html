@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="w3-container" style="height: 100vh; display: flex; justify-content: center; align-items: center;">
+    <div class="w3-card-4 w3-round-large w3-light-pale-blue" style="max-width: 500px; width: 100%; padding: 32px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+        <h2 class="w3-center w3-text-black">Admin Login</h2>
+        <form action="/admin/login" method="post">
+            <p>
+                <label for="username" class="w3-text-grey">Username</label>
+                <input type="text" id="username" name="username" class="w3-input w3-border w3-round" placeholder="Enter your username" required>
+            </p>
+            <p>
+                <label for="password" class="w3-text-grey">Password</label>
+                <input type="password" id="password" name="password" class="w3-input w3-border w3-round" placeholder="Enter your password" required>
+            </p>
+            <p>
+                <button type="submit" class="w3-button w3-block w3-black w3-round-large">Login</button>
+            </p>
+            <p class="w3-center w3-text-grey">
+                <small>Don't have an account? <a href="/admin/register" class="w3-text-black">Register</a></small>
+            </p>
+        </form>
+    </div>
+</div>
+{% endblock %}

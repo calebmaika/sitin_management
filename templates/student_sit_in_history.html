@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- Navigation Bar -->
+<div class="w3-bar w3-black w3-card-4" style="padding: 4px 0;">
+    <div class="w3-bar-item w3-right" style="padding: 8px 16px;">
+        <a href="/" class="w3-button w3-black w3-round" style="padding: 4px 12px; font-size: 14px;">Home</a>
+        <a href="/announcements" class="w3-button w3-black w3-round" style="padding: 4px 12px; font-size: 14px;">Announcements</a>
+        <a href="/resources" class="w3-button w3-black w3-round w3-blue" style="padding: 4px 12px; font-size: 14px;">Resources</a>
+        <a href="/edit_profile" class="w3-button w3-black w3-round" style="padding: 4px 12px; font-size: 14px;">Profile</a>
+        <a href="/student_sit_in_history" class="w3-button w3-black w3-round" style="padding: 4px 12px; font-size: 14px;">Sit-In History</a>
+        <a href="/lab_rules" class="w3-button w3-black w3-round" style="padding: 4px 12px; font-size: 14px;">Lab Rules</a>
+        <a href="/logout" class="w3-button w3-red w3-round" style="padding: 4px 12px; font-size: 14px;">Logout</a>
+    </div>
+</div>
+
+<!-- Sit-In History Content -->
+<div class="w3-container w3-margin-top">
+    <h2>Your Sit-In History</h2>
+
+    {% if sit_in_records %}
+    <table class="w3-table w3-bordered w3-striped">
+        <thead>
+            <tr class="w3-black">
+                <th>Lab Room</th>
+                <th>Purpose</th>
+                <th>Time In</th>
+                <th>Time Out</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in sit_in_records %}
+            <tr>
+                <td>{{ record.lab_room }}</td>
+                <td>{{ record.purpose }}</td>
+                <td>{{ record.sit_in_time }}</td>
+                <td>{{ record.time_out if record.time_out else 'Active' }}</td>
+                <td>
+                    <!-- Feedback Button -->
+                    <button onclick="openFeedbackModal('{{ record.id }}', `{{ record.feedback if record.feedback else '' }}`)" 
+                        class="w3-button w3-blue w3-round">
+                        {{ 'Edit Feedback' if record.feedback else 'Feedback' }}
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="w3-center w3-text-grey">No sit-in history found.</p>
+    {% endif %}
+</div>
+
+<!-- Feedback Modal -->
+<div id="feedbackModal" class="w3-modal">
+    <div class="w3-modal-content w3-card-4 w3-animate-top" style="max-width: 500px;">
+        <header class="w3-container w3-black">
+            <span onclick="closeFeedbackModal()" class="w3-button w3-display-topright">&times;</span>
+            <h4>{{ 'Edit Feedback' if feedback else 'Submit Feedback' }}</h4>
+        </header>
+        <div class="w3-container w3-padding-16">
+            <form id="feedbackForm" method="POST" action="/submit_feedback">
+                <input type="hidden" id="sit_in_id" name="sit_in_id" value="">
+                <div class="w3-row w3-margin-bottom">
+                    <label for="comment"><strong>Comment:</strong></label>
+                    <textarea id="comment" name="comment" class="w3-input w3-border w3-round" rows="5" required></textarea>
+                </div>
+                <div class="w3-row">
+                    <button type="submit" class="w3-button w3-black w3-round">{{ 'Update' if feedback else 'Submit' }}</button>
+                    <!-- <button type="button" onclick="closeFeedbackModal()" class="w3-button w3-red w3-round">Cancel</button> -->
+                    <button type="button" onclick="deleteFeedback()" class="w3-button w3-red w3-round" style="margin-left: 10px;">Delete Feedback</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Function to open the feedback modal
+    function openFeedbackModal(sitInId, feedback) { 
+        document.getElementById('sit_in_id').value = sitInId;
+        document.getElementById('comment').value = feedback || '';
+        document.getElementById('feedbackModal').style.display = 'block';
+    }
+
+    // Function to close the feedback modal
+    function closeFeedbackModal() {
+        document.getElementById('feedbackModal').style.display = 'none';
+    }
+
+    // Function to delete feedback
+    function deleteFeedback() {
+        const sitInId = document.getElementById('sit_in_id').value;
+        if (confirm("Are you sure you want to delete your feedback?")) {
+            // Submit a form to delete feedback
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/delete_feedback';
+
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'sit_in_id';
+            input.value = sitInId;
+
+            form.appendChild(input);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    }
+</script>
+
+{% endblock %}

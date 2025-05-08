@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="w3-bar w3-black w3-card-4" style="padding: 4px 0;">
+    <div class="w3-bar-item w3-left" style="padding: 8px 16px;">
+        <h2 class="w3-text-white" style="font-size: 18px; margin: 0;">Lab Resources</h2>
+    </div>
+    <div class="w3-bar-item w3-right" style="padding: 8px 16px;">
+        <a href="/" class="w3-button w3-black w3-round" style="padding: 4px 12px; font-size: 14px;">Home</a>
+        <a href="/announcements" class="w3-button w3-black w3-round" style="padding: 4px 12px; font-size: 14px;">Announcements</a>
+        <a href="/resources" class="w3-button w3-black w3-round w3-blue" style="padding: 4px 12px; font-size: 14px;">Resources</a>
+        <a href="/edit_profile" class="w3-button w3-black w3-round" style="padding: 4px 12px; font-size: 14px;">Profile</a>
+        <a href="/student_sit_in_history" class="w3-button w3-black w3-round" style="padding: 4px 12px; font-size: 14px;">Sit-In History</a>
+        <a href="/lab_rules" class="w3-button w3-black w3-round" style="padding: 4px 12px; font-size: 14px;">Lab Rules</a>
+        <a href="/logout" class="w3-button w3-red w3-round" style="padding: 4px 12px; font-size: 14px;">Logout</a>
+    </div>
+</div>
+
+<div class="w3-container w3-margin-top">
+    {% if resources %}
+    <div class="w3-container">
+        {% for resource in resources %}
+        <div class="w3-card-4 w3-margin-bottom">
+            <header class="w3-container w3-black w3-padding">
+                <h4 style="margin: 0;">{{ resource.name }}
+                    <span class="w3-tag w3-{{ 'green' if resource.status == 'Available' else 'orange' if resource.status == 'In Use' else 'red' }} w3-right" 
+                          style="font-size: 12px; padding: 2px 8px; margin-left: 8px;">
+                        {{ resource.status }}
+                    </span>
+                </h4>
+            </header>
+            <div class="w3-container w3-padding">
+                {% if resource.image_path %}
+                <div class="w3-center" style="background: #f5f5f5; padding: 10px; margin-bottom: 10px; border-radius: 4px;">
+                    <img src="{{ url_for('static', filename='uploads/' + resource.image_path) }}" 
+                         style="max-width: 100%; max-height: 300px; object-fit: contain;">
+                </div>
+                {% endif %}
+                <p>{{ resource.description }}</p>
+                <p><small>Added on: {{ resource.created_at }}</small></p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="w3-center w3-text-grey">No lab resources available.</p>
+    {% endif %}
+</div>
+{% endblock %}

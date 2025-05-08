@@ -1,0 +1,129 @@
+{% extends 'admin_base.html' %}
+
+{% block content %}
+<div class="w3-container w3-margin-top">
+    <h2 id="form-heading">Add Resource</h2>
+
+    <form action="/admin/resources" method="post" class="w3-container w3-card-4 w3-padding" enctype="multipart/form-data">
+        <input type="hidden" id="resource_id" name="resource_id" value="">
+        
+        <div class="w3-row w3-margin-top">
+            <div class="w3-col s12">
+                <label for="name"><strong>Name:</strong></label>
+                <input type="text" id="name" name="name" class="w3-input w3-border w3-round" placeholder="Enter resource name" required>
+            </div>
+        </div>
+
+        <div class="w3-row w3-margin-top">
+            <div class="w3-col s12">
+                <label for="description"><strong>Description:</strong></label>
+                <textarea id="description" name="description" class="w3-input w3-border w3-round" placeholder="Enter description" rows="3" required></textarea>
+            </div>
+        </div>
+
+        <div class="w3-row w3-margin-top">
+            <div class="w3-col s12">
+                <label for="status"><strong>Status:</strong></label>
+                <select id="status" name="status" class="w3-input w3-border w3-round" required>
+                    <option value="Available">Available</option>
+                    <option value="In Use">In Use</option>
+                    <option value="Maintenance">Maintenance</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="w3-row w3-margin-top">
+            <div class="w3-col s12">
+                <label for="image"><strong>Image:</strong></label>
+                <input type="file" id="image" name="image" class="w3-input w3-border w3-round" accept="image/*">
+            </div>
+        </div>
+
+        <div class="w3-row w3-margin-top">
+            <div class="w3-col s12">
+                <button type="submit" class="w3-button w3-black w3-block w3-round" id="submit-btn">Add Resource</button>
+                <button type="button" class="w3-button w3-gray w3-block w3-round" id="cancel-edit" style="display: none;" onclick="resetForm()">Cancel Edit</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="w3-container w3-margin-top">
+    <h3 class="w3-center">Resources</h3>
+
+    {% if resources %}
+    <div class="w3-container">
+        {% for resource in resources %}
+        <div class="w3-card-4 w3-margin-bottom">
+            <header class="w3-container w3-black w3-padding" style="display: flex; align-items: center; justify-content: space-between; margin-top: 20px;">
+                <h4 style="margin: 0; flex-grow: 1;">{{ resource.name }}</h4>
+                <div class="w3-dropdown" onclick="toggleDropdown(this)">
+                    <button class="w3-button w3-round">&#8942;</button>
+                    <div class="w3-dropdown-content w3-bar-block w3-border" style="display: none;">
+                        <button class="w3-bar-item w3-button" onclick="editResource('{{ resource.id }}', '{{ resource.name }}', '{{ resource.description }}', '{{ resource.status }}')">Edit</button>
+                        <form action="{{ url_for('delete_resource', resource_id=resource.id) }}" method="POST" style="display: inline;">
+                            <button type="submit" class="w3-bar-item w3-button w3-text-red" onclick="return confirm('Are you sure you want to delete this resource?');">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            </header>
+
+            <div class="w3-container w3-padding">
+                <div class="w3-container w3-padding" style="max-width: 50%; height: auto; ">
+                    {% if resource.image_path %}
+                    <img src="{{ url_for('static', filename='uploads/' + resource.image_path) }}" style="max-width: 100%; height: auto; margin-bottom: 10px;">
+                    {% endif %}
+                </div>
+                <p>{{ resource.description }}</p>
+                <p>Status: <span class="w3-tag w3-{{ 'green' if resource.status == 'Available' else 'orange' if resource.status == 'In Use' else 'red' }}">{{ resource.status }}</span></p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="w3-center w3-text-grey">No resources available.</p>
+    {% endif %}
+</div>
+
+<script>
+function editResource(id, name, description, status) {
+    document.getElementById('resource_id').value = id;
+    document.getElementById('name').value = name;
+    document.getElementById('description').value = description;
+    document.getElementById('status').value = status;
+    document.getElementById('form-heading').innerText = 'Edit Resource';
+    document.getElementById('submit-btn').innerText = 'Update Resource';
+    document.getElementById('cancel-edit').style.display = 'block';
+}
+
+function resetForm() {
+    document.getElementById('resource_id').value = '';
+    document.getElementById('name').value = '';
+    document.getElementById('description').value = '';
+    document.getElementById('status').value = 'Available';
+    document.getElementById('form-heading').innerText = 'Add Resource';
+    document.getElementById('submit-btn').innerText = 'Add Resource';
+    document.getElementById('cancel-edit').style.display = 'none';
+    document.getElementById('image').value = '';
+}
+
+function toggleDropdown(elem) {
+    const dropdowns = document.querySelectorAll('.w3-dropdown-content');
+    dropdowns.forEach(d => {
+        if (d !== elem.querySelector('.w3-dropdown-content')) {
+            d.style.display = 'none';
+        }
+    });
+
+    const content = elem.querySelector('.w3-dropdown-content');
+    content.style.display = content.style.display === 'block' ? 'none' : 'block';
+}
+
+window.onclick = function(event) {
+    if (!event.target.matches('.w3-button')) {
+        const dropdowns = document.querySelectorAll('.w3-dropdown-content');
+        dropdowns.forEach(d => d.style.display = 'none');
+    }
+}
+</script>
+{% endblock %}

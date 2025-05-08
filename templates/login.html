@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="w3-container" 
+    style="height: 100vh; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    background-image: url('/static/img/uc.jpg');
+    background-size: cover; 
+    background-position: center;">
+    
+    <div id="box" class="w3-card-4 w3-animate-top w3-round-large w3-light-pale-blue" 
+        style="max-width: 500px; 
+                width: 100%; 
+                padding: 32px; 
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+        
+        <div class="w3-center">
+            <img src="{{ url_for('static', filename='img/ccslogo.png') }}" alt="Logo" 
+                style="max-width: 150px; margin-bottom: 20px;">
+            <span style="font-size: 20px; color: #1E88E5; font-weight: bold;">CCS Sit In Management</span>
+        </div>
+        
+        <!-- <h2 class="w3-center w3-text-blue w3-margin-bottom">Login</h2> -->
+        <form action="/login" method="post">
+            <p>
+                <label for="username" class="w3-text-grey">Username</label>
+                <input type="text" id="username" name="username" class="w3-input w3-border w3-round" 
+                    placeholder="Enter your username" required>
+            </p>
+            <p>
+                <label for="password" class="w3-text-grey">Password</label>
+                <input type="password" id="password" name="password" class="w3-input w3-border w3-round" 
+                    placeholder="Enter your password" required>
+            </p>
+            <p>
+                <button type="submit" class="w3-button w3-block w3-blue w3-hover-light-blue w3-round-large">Login</button>
+            </p>
+            <p class="w3-center w3-text-grey">
+                <small>Don't have an account? <a href="/signup" class="w3-text-blue w3-hover-text-light-blue">Sign Up</a></small>
+            </p>
+        </form>
+    </div>
+
+    <!-- {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div id="toast" class="toast w3-text-white w3-padding w3-round-large w3-center w3-margin-top w3-card-4 w3-animate-opacity" 
+        style="background-color: #f44336; 
+        color: white; 
+        width: 20%; 
+        margin-bottom: 20px;
+        position: fixed; 
+        bottom: 0; 
+        right: 10; 
+        left: 10;">
+            {% for category, message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+    {% endwith %} -->
+
+</div>
+
+<script>
+    window.onload = function() {
+        var toast = document.getElementById('toast');
+        if (toast) {
+            setTimeout(function() {
+                toast.style.opacity = '0'; 
+                setTimeout(function() {
+                    toast.style.display = 'none'; 
+                }, 500); 
+            }, 3000);
+        }
+    };
+</script>
+{% endblock %}
